@@ -1,13 +1,11 @@
-package main
+package core
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -28,6 +26,9 @@ type Project struct {
 }
 
 func ProcessLink(url string) (Project, error) {
+	//Process Link and return a Project object and error.
+	//Could return error or project
+
 	project := Project{}
 
 	resp, err := http.Get(url)
@@ -118,36 +119,36 @@ func getFileName(imgURL string) string {
 	return fileName
 }
 
-func main() {
+// func main() {
 
-	projectChan := make(chan *Project)
-	behanceImage := &Project{}
-	go func() {
-		project, err := ProcessLink("https://www.behance.net/gallery/154852101/Hamburg-Noir-II?tracking_source=search_projects")
-		if err != nil {
-			//fmt.Println(err)
-		}
-		projectChan <- &project
-	}()
+// 	projectChan := make(chan *Project)
+// 	behanceImage := &Project{}
+// 	go func() {
+// 		project, err := ProcessLink("https://www.behance.net/gallery/154852101/Hamburg-Noir-II?tracking_source=search_projects")
+// 		if err != nil {
+// 			//fmt.Println(err)
+// 		}
+// 		projectChan <- &project
+// 	}()
 
-breakLabel:
-	for {
-		for _, r := range `-\|/` {
-			fmt.Printf("%s", fmt.Sprintf("\r%c", r))
-			time.Sleep(time.Duration(1) * time.Second)
-		}
-		select {
-		case behanceImage = <-projectChan:
-			fmt.Printf("\r\n")
-			break breakLabel
-		default:
-		}
-	}
+// breakLabel:
+// 	for {
+// 		for _, r := range `-\|/` {
+// 			fmt.Printf("%s", fmt.Sprintf("\r%c", r))
+// 			time.Sleep(time.Duration(1) * time.Second)
+// 		}
+// 		select {
+// 		case behanceImage = <-projectChan:
+// 			fmt.Printf("\r\n")
+// 			break breakLabel
+// 		default:
+// 		}
+// 	}
 
-	item, err := json.MarshalIndent(behanceImage, "   ", "")
-	if err != nil {
-		fmt.Println(err)
-	}
+// 	item, err := json.MarshalIndent(behanceImage, "   ", "")
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
 
-	fmt.Printf("%s", item)
-}
+// 	fmt.Printf("%s", item)
+// }
