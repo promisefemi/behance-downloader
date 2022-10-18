@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"os"
 	"sync"
-	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -45,8 +44,17 @@ var rootCommand = &cobra.Command{
 		for _, link := range arg {
 			wg.Add(1)
 			go func(link string) {
-				behance := ProcessLink(link, &wg)
-				fmt.Println(behance)
+				behanceImage := ProcessLink(link)
+				if list || author {
+					if list {
+						ListDetails(behanceImage)
+					} else if author {
+						PrintAuthor(behanceImage.Author, true)
+					}
+					wg.Done()
+				} else {
+					fmt.Println("Downloading")
+				}
 			}(link)
 		}
 
@@ -64,10 +72,15 @@ var rootCommand = &cobra.Command{
 			}
 			for _, r := range `-\|/` {
 				fmt.Printf("%s", fmt.Sprintf("\r%c", r))
-				time.Sleep(time.Duration(1) * time.Second)
+				// time.Sleep(time.Duration(1) * time.Second)
 			}
 		}
-		fmt.Printf("\r %s \n", "All Projects Downloaded Successfully...")
+		if list || author {
+			fmt.Printf("\r%s \n", "Detail listed successfully...")
+
+		} else {
+			fmt.Printf("\r %s \n", "All Projects Downloaded Successfully...")
+		}
 		// ProcessLink()
 		// fmt.Println(behanceImage)
 
