@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"sync"
@@ -73,7 +72,17 @@ func PrintAuthor(author core.Author, onlyAuthor bool) {
 	}
 }
 
-func DownloadImage(title string, image core.BehanceImage, wg *sync.WaitGroup) error {
+func CreateFolder(folder string) error {
+	if _, err := os.Stat(folder + "/"); os.IsNotExist(err) {
+		err = os.MkdirAll(folder, 0777)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func DownloadImage(destination string, image core.BehanceImage, wg *sync.WaitGroup) error {
 	// fmt.Printf("URL of the Image %s \n", imageURL)
 	resp, err := http.Get(image.URL)
 	if err != nil {
@@ -89,20 +98,11 @@ func DownloadImage(title string, image core.BehanceImage, wg *sync.WaitGroup) er
 		return err
 	}
 
-	// TODO: Create Folder before trying to download
-	if _, err = os.Stat(title + "/"); os.IsNotExist(err) {
-		_ = os.Mkdir(title, 0755)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	err = ioutil.WriteFile("assets/"+title+"/"+image.FileName, responseBody, 0777)
+	err = ioutil.WriteFile(fmt.Sprintf("%s/%s", destination, image.FileName), responseBody, 0777)
 	if err != nil {
-		fmt.Printf("%s \n*******------******* \n", err)
+		return err
 	}
-
-	fmt.Printf("%s Downloaded \n", image.FileName)
 
 	wg.Done()
+	return nil
 }
