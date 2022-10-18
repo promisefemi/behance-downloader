@@ -63,7 +63,6 @@ var rootCommand = &cobra.Command{
 					} else {
 						destination = behanceImage.ProjectTitle
 					}
-
 					err := CreateFolder(destination)
 					if err != nil {
 						possibleErrors = append(possibleErrors, fmt.Errorf("error creating folder - '%s'", err))
