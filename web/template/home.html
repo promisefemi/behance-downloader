@@ -33,6 +33,7 @@
         </h4>
       </div>
 
+      <p id="page_loading">Loading...</p>
       <div class="results">
         {{range .Images}}
         <div class="image">
@@ -44,4 +45,25 @@
 
     {{end}}
   </body>
+
+  <script>
+    let loading = document.getElementById("page_loading");
+    document.addEventListener("DOMContentLoaded", function () {
+      if (loading) {
+        console.log("JJKSDJ");
+      }
+    });
+    Promise.all(
+      Array.from(document.images)
+        .filter((img) => !img.complete)
+        .map(
+          (img) =>
+            new Promise((resolve) => {
+              img.onload = img.onerror = resolve;
+            })
+        )
+    ).then(() => {
+      loading.remove();
+    });
+  </script>
 </html>
