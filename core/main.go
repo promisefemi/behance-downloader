@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
@@ -45,7 +44,9 @@ func ProcessLink(url string) (Project, error) {
 	// Initialize HTML Parser
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
-
+	if err != nil {
+		return project, err
+	}
 	project.ProjectTitle = doc.Find("title").Text()
 
 	projectModules := doc.Find("#project-modules img")
@@ -60,21 +61,21 @@ func ProcessLink(url string) (Project, error) {
 	return project, nil
 }
 
-func ProcessImage(url string) ([]byte, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf(resp.Status)
-	}
-	responseBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	return responseBody, nil
-}
+// func ProcessImage(url string) ([]byte, error) {
+// 	resp, err := http.Get(url)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer resp.Body.Close()
+// 	if resp.StatusCode != 200 {
+// 		return nil, fmt.Errorf(resp.Status)
+// 	}
+// 	responseBody, err := ioutil.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return responseBody, nil
+// }
 
 func getAuthor(authorSelection *goquery.Selection) Author {
 	author := Author{}
@@ -118,37 +119,3 @@ func getFileName(imgURL string) string {
 	fileName := path.Base(urlPath.Path)
 	return fileName
 }
-
-// func main() {
-
-// 	projectChan := make(chan *Project)
-// 	behanceImage := &Project{}
-// 	go func() {
-// 		project, err := ProcessLink("https://www.behance.net/gallery/154852101/Hamburg-Noir-II?tracking_source=search_projects")
-// 		if err != nil {
-// 			//fmt.Println(err)
-// 		}
-// 		projectChan <- &project
-// 	}()
-
-// breakLabel:
-// 	for {
-// 		for _, r := range `-\|/` {
-// 			fmt.Printf("%s", fmt.Sprintf("\r%c", r))
-// 			time.Sleep(time.Duration(1) * time.Second)
-// 		}
-// 		select {
-// 		case behanceImage = <-projectChan:
-// 			fmt.Printf("\r\n")
-// 			break breakLabel
-// 		default:
-// 		}
-// 	}
-
-// 	item, err := json.MarshalIndent(behanceImage, "   ", "")
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-
-// 	fmt.Printf("%s", item)
-// }

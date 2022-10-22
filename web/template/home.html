@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+    </style>
+    <link rel="stylesheet" href="/static/style.css" />
+    <title>Behance Project Downloader</title>
+  </head>
+  <body>
+    <div class="cover">
+      <!-- <img src="/static/logo.png" alt="Logo" /> -->
+      <h4>Behance Project Downloader</h4>
+      <form action="" method="post">
+        <input
+          type="text"
+          name="url"
+          placeholder="Enter the url here..."
+          required
+        />
+        <button>Submit</button>
+      </form>
+    </div>
+    {{ if .}}
+    <div class="response">
+      <div class="author">
+        <h4>
+          {{.ProjectTitle}} by
+          <a href="{{.Author.ProfileLink}}" target="_blank">{{.Author.Name}}</a>
+        </h4>
+      </div>
+
+      <div class="results">
+        {{range .Images}}
+        <div class="image">
+          <img src="{{.URL}}" alt="{{.FileName}}" />
+        </div>
+        {{end}}
+      </div>
+    </div>
+
+    {{end}}
+  </body>
+</html>

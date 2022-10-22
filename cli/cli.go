@@ -17,7 +17,7 @@ var source string
 var rootCommand = &cobra.Command{
 	Use:   "behance",
 	Short: "Scrapper and Downloader for Behance projects",
-	Long: `A lightweight scrapper and downloader for Behance projects, github at https://github.com/promisefemi/behance-downloader	`,
+	Long:  `A lightweight scrapper and downloader for Behance projects, github at https://github.com/promisefemi/behance-downloader	`,
 	Args: func(cmd *cobra.Command, arg []string) error {
 
 		if len(arg) <= 0 {

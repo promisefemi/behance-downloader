@@ -1,0 +1,125 @@
+* {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  padding: 40px 0 150px;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  /* align-items: center; */
+  /* background-color: #2f3255; */
+  background-color: #001c40;
+  overflow-y: scroll;
+}
+
+.cover {
+  margin: 100px auto 0;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.cover img {
+  margin-bottom: 20px;
+  width: 120px;
+  height: auto;
+  display: none;
+}
+
+.cover h4 {
+  font-size: 40px;
+  margin: 0;
+  color: #cbced9;
+  margin-bottom: 10px;
+  text-align: center;
+  /* color: #0057ff; */
+}
+
+.cover form {
+  width: 100%;
+  display: flex;
+  position: relative;
+  background-color: white;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 20px;
+  margin-top: 30px;
+  /* box-shadow: 0 0 20px 4px #e0d9d9; */
+}
+
+.cover form input {
+  padding: 20px 150px 20px 20px;
+  border: 0;
+  font-size: 16px;
+  color: #000;
+  outline: none;
+  width: 100%;
+}
+.cover form input:focus {
+  outline: none;
+}
+.cover form button {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  border: 0;
+  background-color: #0a448e;
+  border: 5px solid #001c40;
+  /* background-color: #001c40; */
+  color: white;
+  padding: 20px 60px;
+  font-weight: bolder;
+  font-size: 16px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cover form button:hover {
+  background-color: #001c40;
+}
+
+.response {
+  width: 80%;
+  margin: 30px auto 0;
+}
+.author {
+  text-align: center;
+  color: white;
+}
+.author h4 {
+  font-size: 25px;
+  color: white;
+}
+.author h4 a {
+  color: white;
+}
+.results {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.results .image {
+  width: 300px;
+  height: 200px;
+  border-radius: 20px;
+  margin: 5px;
+  border: 10px solid transparent;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.results .image:hover {
+  border-color: #0a448e;
+}
+.results .image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}

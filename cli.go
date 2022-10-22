@@ -2,6 +2,6 @@ package main
 
 import "github.com/promisefemi/behance-downloader/cli"
 
-func main() {
+func _main() {
 	cli.Execute()
 }
