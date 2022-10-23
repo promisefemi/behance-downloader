@@ -10,7 +10,9 @@ import (
 
 func main() {
 
-	http.HandleFunc("/", web.HandlePage)
+	http.HandleFunc("/", web.Home)
+	http.HandleFunc("/result", web.Result)
+	http.HandleFunc("/download", web.Download)
 
 	fileServer := http.FileServer(http.Dir("./web/template/static"))
 

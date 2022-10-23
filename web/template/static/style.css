@@ -39,6 +39,10 @@ body {
   text-align: center;
   /* color: #0057ff; */
 }
+.cover h4 a {
+  text-decoration: none;
+  color: #cbced9;
+}
 
 .cover form {
   width: 100%;
@@ -105,25 +109,78 @@ body {
   justify-content: center;
   align-items: center;
 }
-
-.results .image {
+.results label {
   width: 300px;
   height: 200px;
-  border-radius: 20px;
   margin: 5px;
+  position: relative;
+}
+.results input {
+  visibility: hidden;
+  opacity: 0;
+}
+.results .image {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
   border: 10px solid transparent;
   overflow: hidden;
+  position: relative;
   transition: all 0.2s;
 }
 .results .image:hover {
   border-color: #0a448e;
 }
+
+.results input:checked ~ .image {
+  border-color: #0a448e;
+}
+
 .results .image img {
   height: 100%;
   width: 100%;
   object-fit: cover;
 }
-#page_loading{
+#page_loading {
   text-align: center;
   color: white;
 }
+
+.another-project {
+  display: flex;
+  text-decoration: none;
+  color: white;
+  background-color: #0a448e;
+  width: max-content;
+  padding: 15px 20px;
+}
+
+/* BUTTONS */
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto;
+}
+.buttons button {
+  padding: 15px 20px;
+  border: 0;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.download-all {
+  background-color: rgb(188, 22, 22);
+}
+.download-selected {
+  background-color: #0a448e;
+}
+
+.download-selected:disabled {
+  background-color: #0a448e;
+  cursor: not-allowed;
+ }

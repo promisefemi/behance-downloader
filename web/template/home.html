@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/static/logo.png" type="image/x-icon" />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
     </style>
@@ -14,7 +15,7 @@
     <div class="cover">
       <!-- <img src="/static/logo.png" alt="Logo" /> -->
       <h4>Behance Project Downloader</h4>
-      <form action="" method="post">
+      <form action="/result" method="post">
         <input
           type="text"
           name="url"
@@ -24,46 +25,5 @@
         <button>Submit</button>
       </form>
     </div>
-    {{ if .}}
-    <div class="response">
-      <div class="author">
-        <h4>
-          {{.ProjectTitle}} by
-          <a href="{{.Author.ProfileLink}}" target="_blank">{{.Author.Name}}</a>
-        </h4>
-      </div>
-
-      <p id="page_loading">Loading...</p>
-      <div class="results">
-        {{range .Images}}
-        <div class="image">
-          <img src="{{.URL}}" alt="{{.FileName}}" />
-        </div>
-        {{end}}
-      </div>
-    </div>
-
-    {{end}}
   </body>
-
-  <script>
-    let loading = document.getElementById("page_loading");
-    document.addEventListener("DOMContentLoaded", function () {
-      if (loading) {
-        console.log("JJKSDJ");
-      }
-    });
-    Promise.all(
-      Array.from(document.images)
-        .filter((img) => !img.complete)
-        .map(
-          (img) =>
-            new Promise((resolve) => {
-              img.onload = img.onerror = resolve;
-            })
-        )
-    ).then(() => {
-      loading.remove();
-    });
-  </script>
 </html>

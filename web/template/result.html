@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/static/logo.png" type="image/x-icon" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+    </style>
+    <link rel="stylesheet" href="/static/style.css" />
+    <title>Behance Project Downloader</title>
+  </head>
+  <body>
+    <div class="cover">
+      <!-- <img src="/static/logo.png" alt="Logo" /> -->
+      <h4><a href="/"> Behance Project Downloader </a></h4>
+      <a href="/" class="another-project"> Download another Project </a>
+    </div>
+    {{ if .}}
+    <div class="response">
+      <div class="author">
+        <h4>
+          {{.ProjectTitle}} by
+          <a href="{{.Author.ProfileLink}}" target="_blank">{{.Author.Name}}</a>
+        </h4>
+      </div>
+
+      <p id="page_loading">Loading...</p>
+      <div class="result">
+        <form action="/download" method="POST">
+        
+          <div class="buttons">
+            <button type="submit" class="download-selected" disabled>
+              Download
+            </button>
+            <button type="button" onclick="downloadAll()" class="download-all">
+              Download All
+            </button>
+          </div>
+          <div class="results">
+            {{range .Images}}
+            <label for="{{.FileName}}">
+              <input
+                type="checkbox"
+                value="{{.URL}}"
+                name="selected[]"
+                id="{{.FileName}}"
+              />
+              <div class="image">
+                <img src="{{.URL}}" alt="{{.FileName}}" />
+              </div>
+            </label>
+            {{end}}
+          </div>
+          <div class="buttons">
+            <button type="submit" class="download-selected" disabled>
+              Download
+            </button>
+            <button type="button" onclick="downloadAll()" class="download-all">
+              Download All
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {{end}}
+  </body>
+
+  <script>
+    let loading = document.getElementById("page_loading");
+    document.addEventListener("DOMContentLoaded", function () {
+      if (loading) {
+        console.log("JJKSDJ");
+      }
+    });
+    Promise.all(
+      Array.from(document.images)
+        .filter((img) => !img.complete)
+        .map(
+          (img) =>
+            new Promise((resolve) => {
+              img.onload = img.onerror = resolve;
+            })
+        )
+    ).then(() => {
+      loading.remove();
+    });
+    let countSelected = 0;
+    let checkBoxes = document.querySelectorAll("input[name='selected[]']");
+    let download = document.querySelector(".download-selected");
+
+    for (let index = 0; index < checkBoxes.length; index++) {
+      const element = checkBoxes[index];
+      element.addEventListener("click", function () {
+        if (element.checked) {
+          countSelected++;
+        } else {
+          countSelected--;
+        }
+        if (countSelected > 1) {
+          download.removeAttribute("disabled");
+        } else {
+          download.setAttribute("disabled", true);
+        }
+      });
+    }
+
+    function downloadAll() {
+      for (let index = 0; index < checkBoxes.length; index++) {
+        checkBoxes[index].checked = true;
+      }
+      document.querySelector("form").submit();
+    }
+  </script>
+</html>

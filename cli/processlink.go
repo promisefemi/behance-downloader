@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"sync"
 
@@ -84,21 +83,12 @@ func CreateFolder(folder string) error {
 
 func DownloadImage(destination string, image core.BehanceImage, wg *sync.WaitGroup) error {
 	// fmt.Printf("URL of the Image %s \n", imageURL)
-	resp, err := http.Get(image.URL)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("Cannot reach page, please check URL")
-	}
-
-	responseBody, err := ioutil.ReadAll(resp.Body)
+	body, _, _, err := core.ProcessDownload(image.URL)
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(fmt.Sprintf("%s/%s", destination, image.FileName), responseBody, 0777)
+	err = ioutil.WriteFile(fmt.Sprintf("%s/%s", destination, image.FileName), body, 0777)
 	if err != nil {
 		return err
 	}

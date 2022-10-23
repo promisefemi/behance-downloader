@@ -2,8 +2,8 @@ package core
 
 import (
 	"fmt"
+	"io"
 	"net/http"
-	"net/url"
 	"path"
 
 	"github.com/PuerkitoBio/goquery"
@@ -19,9 +19,9 @@ type BehanceImage struct {
 	FileName, URL string
 }
 type Project struct {
-	Author       Author
-	ProjectTitle string
-	Images       []BehanceImage
+	Author            Author
+	ProjectTitle, URL string
+	Images            []BehanceImage
 }
 
 func ProcessLink(url string) (Project, error) {
@@ -58,6 +58,7 @@ func ProcessLink(url string) (Project, error) {
 			project.Images = append(project.Images, parsedImage)
 		}
 	})
+	project.URL = url
 	return project, nil
 }
 
@@ -76,6 +77,23 @@ func ProcessLink(url string) (Project, error) {
 // 	}
 // 	return responseBody, nil
 // }
+
+func ProcessDownload(url string) ([]byte, string, string, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return nil, "", "", fmt.Errorf("Cannot reach page, please check URL")
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, "", "", err
+	}
+	return body, resp.Header.Get("Content-Type"), resp.Header.Get("Content-Length"), nil
+}
 
 func getAuthor(authorSelection *goquery.Selection) Author {
 	author := Author{}
@@ -115,7 +133,7 @@ func getImage(s *goquery.Selection) (BehanceImage, error) {
 }
 
 func getFileName(imgURL string) string {
-	urlPath, _ := url.Parse(imgURL)
-	fileName := path.Base(urlPath.Path)
+	// urlPath, _ := url.Parse(imgURL)
+	fileName := path.Base(imgURL)
 	return fileName
 }
