@@ -42,7 +42,7 @@
     <p id="page_loading">Loading...</p>
     <div class="result">
         <form action="/download" method="POST">
-
+            <input type="hidden" name="projectName" value="{{.ProjectTitle}}">
             <div class="results">
                 {{range .Images}}
 

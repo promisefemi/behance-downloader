@@ -2,17 +2,13 @@ package core
 
 import (
 	"archive/zip"
-	"bytes"
 	"fmt"
+	"github.com/promisefemi/behance-downloader/core"
 	"html/template"
-	"io"
 	"log"
 	"net/http"
-	"os"
 	"path"
 	"path/filepath"
-
-	"github.com/promisefemi/behance-downloader/core"
 )
 
 func Home(rw http.ResponseWriter, r *http.Request) {
@@ -72,46 +68,55 @@ func Download(rw http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		selected := r.PostForm["selected[]"]
-
+		fileName := r.PostFormValue("projectName")
 		if len(selected) > 1 {
-			zipFileName:= "asdfasdfasdfsadfsadfasdf.zip"
-			createFile, _ := os.Create(zipFileName)
-			zipFile := zip.NewWriter(createFile)
-			defer zipFile.Close()
-			for _, image := range selected {
-				// go func(image string) {
-				//downlodImages(image, rw)
-				// }(image)
-				fileName := path.Base(image)
-
-				imageBody, _, _, err := core.ProcessDownload(image)
-				if err != nil {
-					continue
-				}
-				addFileToZip(zipFile, imageBody, fileName)
-			}
-
-
-
+			handleZipDownload(fileName, selected, rw)
 		} else {
 			downlodImages(selected[0], rw)
 		}
-
+		http.Redirect(rw, r, "", http.StatusFound)
 	}
 
 }
-func addFileToZip(zipFile *zip.Writer, file []byte, fileName string) error {
+func handleZipDownload(fileName string, images []string, rw http.ResponseWriter) {
+	zipFileName := fileName + ".zip"
 
+	zipFile := zip.NewWriter(rw)
+	defer zipFile.Close()
+	for _, image := range images {
+		fileName := path.Base(image)
+		imageBody, _, _, err := core.ProcessDownload(image)
+		if err != nil {
+			continue
+		}
+		err = addFileToZip(zipFile, imageBody, fileName)
+		if err != nil {
+			fmt.Printf("Could not add %s to zip file -- %s", image, err)
+			continue
+		}
+	}
+
+	rw.Header().Set("Content-Disposition", "attachment; filename="+zipFileName)
+	rw.Header().Set("Content-Type", "application/zip")
+	fmt.Printf("Downloading %s to client", zipFileName)
+
+	err := zipFile.Close()
+	if err != nil {
+		fmt.Printf("%s", err)
+	}
+	return
+}
+
+func addFileToZip(zipFile *zip.Writer, file []byte, fileName string) error {
 	zipImage, err := zipFile.Create(fileName)
 	if err != nil {
 		return err
 	}
-	reader := bytes.NewReader(file)
-	_, err = io.Copy(zipImage, reader)
+	length, err := zipImage.Write(file)
+	fmt.Printf("image write to zip length -- %d \n", length)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 func downlodImages(image string, rw http.ResponseWriter) {
