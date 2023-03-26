@@ -105,7 +105,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-	background-color: #1E1E1E;
+    z-index: 2;
+    background-color: #1E1E1E;
 }
 
 .header h4 {
@@ -153,6 +154,7 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    padding-bottom: 40px;
 }
 
 .results .image {
@@ -160,7 +162,7 @@ body {
     height: 300px;
     margin: 5px;
     position: relative;
-    border-radius: 20px;
+    border-radius: 10px;
     overflow: hidden;
     cursor: zoom-in;
 }
@@ -179,7 +181,7 @@ body {
 }
 
 .image input:checked + label:before {
-    content: "x";
+    content: "✅";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -269,6 +271,98 @@ body {
 }
 
 .download-selected:disabled {
-    background-color: #0a448e;
+    background-color: #031e42;
     cursor: not-allowed;
+}
+
+
+.cm-modal {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 4;
+}
+
+.cm-modal button {
+    background: transparent;
+    color: white;
+    border: 0;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 20px;
+}
+
+.cm-modal img {
+    max-height: 100%;
+    max-width: 95%;
+}
+
+@media screen and (max-width: 1190px) {
+    .response {
+        width: 90%;
+    }
+
+    .results .image {
+        width: calc((100% / 3) - 10px)
+    }
+}
+
+
+@media screen and (max-width: 980px) {
+    .cover {
+        width: 80%;
+    }
+
+    .cover form input {
+        padding: 30px 30px 110px 30px;
+        text-align: center;
+    }
+
+    .cover form button {
+        bottom: 20px;
+        right: unset;
+        left: 50%;
+        transform: translateX(-50%);
+
+    }
+}
+
+
+
+@media screen and (max-width: 590px) {
+    .response {
+        width: 95%;
+    }
+
+    .results .image {
+        width: calc((100% / 2) - 10px)
+    }
+
+    .response-header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .author {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+    }
+
+    .header h4 {
+        margin-bottom: 10px;
+    }
+
 }

@@ -29,7 +29,7 @@
             </h4>
         </div>
         <div class="buttons">
-            <button type="submit" class="download-selected" disabled>
+            <button type="button" class="download-selected" disabled onclick="downloadImage()">
                 Download
             </button>
             <button type="button" onclick="downloadAll()" class="download-all">
@@ -37,7 +37,6 @@
             </button>
         </div>
     </div>
-
 
     <p id="page_loading">Loading...</p>
     <div class="result">
@@ -54,7 +53,7 @@
                             id="{{.FileName}}"
                     />
                     <label for="{{.FileName}}"></label>
-                    <img src="{{.URL}}" alt="{{.FileName}}"/>
+                    <img src="{{.URL}}" alt="{{.FileName}}" onclick="openModal('{{.URL}}')"/>
                 </div>
 
                 {{end}}
@@ -110,11 +109,37 @@
         });
     }
 
+    function downloadImage() {
+        if (countSelected <= 0) {
+            alert("Select an image")
+        } else {
+            document.querySelector("form").submit();
+        }
+    }
+
     function downloadAll() {
         for (let index = 0; index < checkBoxes.length; index++) {
+            checkBoxes[index].style.opacity = 0
             checkBoxes[index].checked = true;
         }
         document.querySelector("form").submit();
+    }
+
+
+</script>
+<script>
+    function openModal(url) {
+        let modal = document.createElement("div")
+        modal.classList.add("cm-modal")
+        let image = document.createElement("img")
+        let close = document.createElement("button")
+        close.innerHTML = "❌"
+        image.src = url
+        modal.append(image, close)
+        close.addEventListener("click", function () {
+            modal.remove()
+        })
+        document.body.appendChild(modal)
     }
 </script>
 </html>

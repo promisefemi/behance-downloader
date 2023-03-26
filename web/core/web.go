@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 func Home(rw http.ResponseWriter, r *http.Request) {
@@ -47,6 +48,10 @@ func Result(rw http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 
+		//jsonByte, _ := json.MarshalIndent(behanceImage, " ", "   ")
+		//
+		//fmt.Printf("%s", jsonByte)
+
 		templ, err := parseTemplate("template/result.html")
 		if err != nil {
 			log.Fatal(err)
@@ -72,17 +77,17 @@ func Download(rw http.ResponseWriter, r *http.Request) {
 		if len(selected) > 1 {
 			handleZipDownload(fileName, selected, rw)
 		} else {
-			downlodImages(selected[0], rw)
+			downloadImage(selected[0], rw)
 		}
-		http.Redirect(rw, r, "", http.StatusFound)
+		http.Redirect(rw, r, "/", http.StatusSeeOther)
 	}
-
+	http.Redirect(rw, r, "/", http.StatusSeeOther)
 }
-func handleZipDownload(fileName string, images []string, rw http.ResponseWriter) {
-	zipFileName := fileName + ".zip"
+func handleZipDownload(projectName string, images []string, rw http.ResponseWriter) {
+	zipFileName := projectName + ".zip"
 
 	zipFile := zip.NewWriter(rw)
-	defer zipFile.Close()
+	//defer zipFile.Close()
 	for _, image := range images {
 		fileName := path.Base(image)
 		imageBody, _, _, err := core.ProcessDownload(image)
@@ -95,10 +100,11 @@ func handleZipDownload(fileName string, images []string, rw http.ResponseWriter)
 			continue
 		}
 	}
+	replaceZipFileName := strings.ReplaceAll(zipFileName, " ", "-")
 
-	rw.Header().Set("Content-Disposition", "attachment; filename="+zipFileName)
+	rw.Header().Set("Content-Disposition", "attachment; filename="+replaceZipFileName)
 	rw.Header().Set("Content-Type", "application/zip")
-	fmt.Printf("Downloading %s to client", zipFileName)
+	fmt.Printf("Downloading %s to client", replaceZipFileName)
 
 	err := zipFile.Close()
 	if err != nil {
@@ -119,7 +125,7 @@ func addFileToZip(zipFile *zip.Writer, file []byte, fileName string) error {
 	}
 	return nil
 }
-func downlodImages(image string, rw http.ResponseWriter) {
+func downloadImage(image string, rw http.ResponseWriter) {
 	fileName := path.Base(image)
 	fmt.Println(fileName)
 	imageBody, contentType, contentLength, err := core.ProcessDownload(image)
@@ -131,7 +137,7 @@ func downlodImages(image string, rw http.ResponseWriter) {
 	rw.Header().Set("Content-Disposition", "attachment; filename="+fileName)
 	rw.Header().Set("Content-Type", contentType)
 	rw.Header().Set("Content-Length", contentLength)
-	rw.Write(imageBody)
+	_, _ = rw.Write(imageBody)
 	// io.Copy(rw, buffer)
 }
 
