@@ -1,23 +1,31 @@
 package core
 
 import (
-	"archive/zip"
+	"embed"
 	"fmt"
 	"github.com/promisefemi/behance-downloader/core"
+	"github.com/promisefemi/behance-downloader/web/utils"
 	"html/template"
 	"log"
 	"net/http"
-	"path"
-	"path/filepath"
-	"strings"
 )
 
-func Home(rw http.ResponseWriter, r *http.Request) {
+type Page struct {
+	Directory embed.FS
+}
+
+func NewPageHandler(directory embed.FS) *Page {
+	return &Page{
+		directory,
+	}
+}
+
+func (p Page) Home(rw http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		fmt.Println("Printing home page -- get")
 
-		templ, err := parseTemplate("template/home.html")
+		templ, err := p.parseTemplate("template/home.html")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -33,7 +41,7 @@ func Home(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Result(rw http.ResponseWriter, r *http.Request) {
+func (p Page) Result(rw http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		err := r.ParseForm()
@@ -52,7 +60,7 @@ func Result(rw http.ResponseWriter, r *http.Request) {
 		//
 		//fmt.Printf("%s", jsonByte)
 
-		templ, err := parseTemplate("template/result.html")
+		templ, err := p.parseTemplate("template/result.html")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -66,7 +74,8 @@ func Result(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Download(rw http.ResponseWriter, r *http.Request) {
+func (p Page) Download(rw http.ResponseWriter, r *http.Request) {
+
 	if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
@@ -75,78 +84,18 @@ func Download(rw http.ResponseWriter, r *http.Request) {
 		selected := r.PostForm["selected[]"]
 		fileName := r.PostFormValue("projectName")
 		if len(selected) > 1 {
-			handleZipDownload(fileName, selected, rw)
+			utils.HandleZipDownload(fileName, selected, rw)
 		} else {
-			downloadImage(selected[0], rw)
+			utils.DownloadImage(selected[0], rw)
 		}
 		http.Redirect(rw, r, "/", http.StatusSeeOther)
 	}
 	http.Redirect(rw, r, "/", http.StatusSeeOther)
 }
-func handleZipDownload(projectName string, images []string, rw http.ResponseWriter) {
-	zipFileName := projectName + ".zip"
 
-	zipFile := zip.NewWriter(rw)
-	//defer zipFile.Close()
-	for _, image := range images {
-		fileName := path.Base(image)
-		imageBody, _, _, err := core.ProcessDownload(image)
-		if err != nil {
-			continue
-		}
-		err = addFileToZip(zipFile, imageBody, fileName)
-		if err != nil {
-			fmt.Printf("Could not add %s to zip file -- %s", image, err)
-			continue
-		}
-	}
-	replaceZipFileName := strings.ReplaceAll(zipFileName, " ", "-")
+func (p Page) parseTemplate(templateString string) (*template.Template, error) {
 
-	rw.Header().Set("Content-Disposition", "attachment; filename="+replaceZipFileName)
-	rw.Header().Set("Content-Type", "application/zip")
-	fmt.Printf("Downloading %s to client", replaceZipFileName)
-
-	err := zipFile.Close()
-	if err != nil {
-		fmt.Printf("%s", err)
-	}
-	return
-}
-
-func addFileToZip(zipFile *zip.Writer, file []byte, fileName string) error {
-	zipImage, err := zipFile.Create(fileName)
-	if err != nil {
-		return err
-	}
-	length, err := zipImage.Write(file)
-	fmt.Printf("image write to zip length -- %d \n", length)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-func downloadImage(image string, rw http.ResponseWriter) {
-	fileName := path.Base(image)
-	fmt.Println(fileName)
-	imageBody, contentType, contentLength, err := core.ProcessDownload(image)
-	if err != nil {
-		return
-	}
-	// buffer := bytes.NewBuffer(imageBody)
-	fmt.Printf("%s --- %s --- %s", fileName, contentType, contentLength)
-	rw.Header().Set("Content-Disposition", "attachment; filename="+fileName)
-	rw.Header().Set("Content-Type", contentType)
-	rw.Header().Set("Content-Length", contentLength)
-	_, _ = rw.Write(imageBody)
-	// io.Copy(rw, buffer)
-}
-
-func parseTemplate(templateString string) (*template.Template, error) {
-	fileName, err := filepath.Abs(templateString)
-	if err != nil {
-		return nil, err
-	}
-	templ, err := template.ParseFiles(fileName)
+	templ, err := template.ParseFS(p.Directory, templateString)
 	if err != nil {
 		return nil, err
 	}
