@@ -11,3 +11,5 @@ The project is available as a Cli and a Web app
 
 ## Web
 ``go run web/main.go``
+
+https://behance-downloader.herokuapp.com/
