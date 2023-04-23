@@ -12,8 +12,11 @@ import (
 func HandleZipDownload(projectName string, images []string, rw http.ResponseWriter) {
 	zipFileName := projectName + ".zip"
 
+	replaceZipFileName := strings.ReplaceAll(zipFileName, " ", "-")
+	rw.Header().Set("Content-Disposition", "attachment; filename="+replaceZipFileName)
 	zipFile := zip.NewWriter(rw)
 	//defer zipFile.Close()
+	//zipFile.
 	for _, image := range images {
 		fileName := path.Base(image)
 		imageBody, _, _, err := core.ProcessDownload(image)
@@ -26,9 +29,7 @@ func HandleZipDownload(projectName string, images []string, rw http.ResponseWrit
 			continue
 		}
 	}
-	replaceZipFileName := strings.ReplaceAll(zipFileName, " ", "-")
 
-	rw.Header().Set("Content-Disposition", "attachment; filename="+replaceZipFileName)
 	rw.Header().Set("Content-Type", "application/zip")
 	fmt.Printf("Downloading %s to client", replaceZipFileName)
 
