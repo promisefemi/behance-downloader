@@ -6,6 +6,7 @@ import (
 	"github.com/promisefemi/behance-downloader/web/core"
 	"log"
 	"net/http"
+	"os"
 )
 
 //go:embed template/*
@@ -14,14 +15,10 @@ var ViewsDirectory embed.FS
 func main() {
 
 	page := core.NewPageHandler(ViewsDirectory)
-
-	//filesDirectory, err := ViewsDirectory.ReadFile("template/home.html")
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	////var file []byte
-	////fmt.Println(filesDirectory.Read(file))
-	//fmt.Printf("\n%s\n", filesDirectory)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
 
 	http.HandleFunc("/", page.Home)
 	http.HandleFunc("/result", page.Result)
@@ -32,8 +29,8 @@ func main() {
 
 	http.Handle("/template/static/", http.StripPrefix("/", fileServer))
 
-	fmt.Println("Server starting up @ http://localhost:8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	fmt.Printf("Server starting up @ port:%s", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil); err != nil {
 		log.Fatal(err)
 	}
 }
