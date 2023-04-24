@@ -306,6 +306,22 @@ body {
     max-width: 95%;
 }
 
+.built-with , .built-with a {
+    color: white;
+    font-size: 20px;
+    text-align: center;
+}
+
+.built-with a:hover {
+    color: white
+}
+
+.built-with span {
+    color: red;
+    font-size: 30px;
+}
+
+
 @media screen and (max-width: 1190px) {
     .response {
         width: 90%;
@@ -335,7 +351,6 @@ body {
 
     }
 }
-
 
 
 @media screen and (max-width: 590px) {

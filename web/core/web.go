@@ -57,7 +57,6 @@ func (p Page) Result(rw http.ResponseWriter, r *http.Request) {
 		}
 
 		//jsonByte, _ := json.MarshalIndent(behanceImage, " ", "   ")
-		//
 		//fmt.Printf("%s", jsonByte)
 
 		templ, err := p.parseTemplate("template/result.html")

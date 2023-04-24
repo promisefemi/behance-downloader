@@ -1,0 +1,10 @@
+# flyctl launch added from .gitignore
+**/.idea
+ **/codealike.json
+ 
+# flyctl launch added from .idea/.gitignore
+# Default ignored files
+.idea/shelf
+ # Editor-based HTTP Client requests
+fly.toml
+.air.toml

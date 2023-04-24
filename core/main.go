@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"path"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -47,7 +48,7 @@ func ProcessLink(url string) (Project, error) {
 	if err != nil {
 		return project, err
 	}
-	project.ProjectTitle = doc.Find("title").Text()
+	project.ProjectTitle = strings.ReplaceAll(doc.Find("title").Text(), "on BehanceAdobe", "")
 
 	projectModules := doc.Find("#project-modules img")
 	authorSelection := doc.Find(".Project-ownerName-A8O")

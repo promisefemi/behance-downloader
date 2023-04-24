@@ -3,10 +3,11 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/promisefemi/behance-downloader/web/core"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/promisefemi/behance-downloader/web/core"
 )
 
 //go:embed template/*
