@@ -5,6 +5,8 @@ Although behance is a great place for creators to share their ideas and work. It
 feature to allow users download full projects. To address this i developed a scrapper that allows users to do just that.
 
 The project is available as a Cli and a Web app
+https://behance-downloader.fly.dev
+
 
 ## CLI
 ``go run cli/main.go``
@@ -12,4 +14,3 @@ The project is available as a Cli and a Web app
 ## Web
 ``go run web/main.go``
 
-https://behance-downloader.herokuapp.com/
