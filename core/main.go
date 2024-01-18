@@ -1,9 +1,11 @@
 package core
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"path"
 	"strings"
 
@@ -25,13 +27,26 @@ type Project struct {
 	Images            []BehanceImage
 }
 
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
 func ProcessLink(url string) (Project, error) {
 	//Process Link and return a Project object and error.
 	//Could return error or project
 
 	project := Project{}
 
-	resp, err := http.Get(url)
+	client := &http.Client{}
+	request, err := http.NewRequest(http.MethodGet, url, nil)
+	check(err)
+	request.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0")
+	request.Header.Set("Sec-Fetch-Site", "same-origin")
+	request.Header.Set("Sec-Fetch-Mode", "navigate")
+	request.Header.Set("Sec-Fetch-Dest", "document")
+
+	resp, err := client.Do(request)
 	if err != nil {
 		return project, err
 	}
@@ -42,14 +57,20 @@ func ProcessLink(url string) (Project, error) {
 
 	defer resp.Body.Close()
 
-	// Initialize HTML Parser
+	body, err := io.ReadAll(resp.Body)
+	check(err)
+	file, err := os.OpenFile("file.html", os.O_RDONLY|os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	check(err)
 
+	_, err = file.Write(body)
+	check(err)
+
+	// Initialize HTML Parser
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return project, err
 	}
 	project.ProjectTitle = strings.ReplaceAll(doc.Find("title").Text(), "on BehanceAdobe", "")
-
 	projectModules := doc.Find("#project-modules img")
 	authorSelection := doc.Find(".Project-ownerName-A8O")
 	project.Author = getAuthor(authorSelection)
@@ -60,6 +81,7 @@ func ProcessLink(url string) (Project, error) {
 		}
 	})
 	project.URL = url
+
 	return project, nil
 }
 
@@ -137,4 +159,24 @@ func getFileName(imgURL string) string {
 	// urlPath, _ := url.Parse(imgURL)
 	fileName := path.Base(imgURL)
 	return fileName
+}
+
+func printToTerminal(payload interface{}) {
+	if _, yes := payload.(string); yes {
+		fmt.Println(payload)
+	}
+
+	if _, yes := payload.([]byte); yes {
+		fmt.Printf("%s\n", payload)
+	}
+
+	if _, yes := payload.(int); yes {
+		fmt.Println(payload)
+	}
+
+	data, err := json.MarshalIndent(payload, " ", "  ")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(data))
 }

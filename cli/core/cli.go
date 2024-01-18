@@ -31,7 +31,7 @@ var rootCommand = &cobra.Command{
 			}
 
 			if parsedUrl.Host != "www.behance.net" {
-				return fmt.Errorf("invalid Url, Url is not from Behance")
+				return fmt.Errorf("invalid URL, URL is not from Behance")
 			}
 		}
 
@@ -47,7 +47,12 @@ var rootCommand = &cobra.Command{
 		for _, link := range arg {
 			wg.Add(1)
 			go func(link string) {
-				behanceImage := ProcessLink(link)
+				behanceImage, err := ProcessLink(link)
+				if err != nil {
+					fmt.Printf("\r\n")
+					exit(fmt.Sprintf("%s", err))
+				}
+
 				if list || author {
 					if list {
 						ListDetails(behanceImage)

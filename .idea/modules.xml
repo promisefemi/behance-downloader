@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/behance.iml" filepath="$PROJECT_DIR$/.idea/behance.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../ziptest/.idea/ziptest.iml" filepath="$PROJECT_DIR$/../ziptest/.idea/ziptest.iml" />
     </modules>
   </component>
 </project>
